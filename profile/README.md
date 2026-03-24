@@ -1,50 +1,203 @@
-<div align="center">
+# 🧠 CLAIV Memory
 
-# CLAIV Memory
+**AI Memory for Chatbots, Agents, and LLM Apps**
 
-### Persistent memory infrastructure for AI applications
+> Your AI forgets everything.
+> CLAIV fixes that.
 
 [![LoCoMo J-Score](https://img.shields.io/badge/LoCoMo%20J--Score-75.0%25-brightgreen)](https://claiv.io)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![SDK: JavaScript](https://img.shields.io/badge/SDK-JavaScript-yellow)](https://github.com/Claiv-Memory/sdk-js)
 [![SDK: Python](https://img.shields.io/badge/SDK-Python-blue)](https://github.com/Claiv-Memory/sdk-py)
 
-**Store events. Ingest documents. Recall relevant context. Forget intentionally.**
+---
 
-[Get Started](https://claiv.io) · [Read the Docs](https://claiv.io) · [Templates](#repositories)
+## 🚨 The problem
 
-</div>
+If you're building with OpenAI, Claude, or LangChain — you've seen this:
+
+- Your chatbot forgets users between sessions
+- Your AI agent loses context after a few steps
+- Your app relies on fragile chat history or prompt stuffing
+- Your RAG setup is inconsistent and unreliable
+
+👉 This is not a model problem — it's a **memory problem**
 
 ---
 
-## What CLAIV Memory is
+## ✅ The solution
 
-CLAIV Memory is a production memory system for AI applications. It gives agents and applications the ability to store events, upload documents, retrieve relevant context, and delete data intentionally — with APIs built for real-world use.
+CLAIV is a **drop-in memory API for AI applications.**
 
-This is not chat history or basic vector search. It is a dedicated memory layer that supports:
+It gives your AI:
 
-- **Event memory** — structured facts extracted from interactions over time
-- **Document memory** — uploaded files indexed for recall, not dead attachments
-- **Contextual recall** — surface relevant memory from either source at the right moment
-- **Controlled forgetting** — delete or suppress data when it should no longer be retained
-
----
-
-## Why it exists
-
-Most AI apps still break in the same places:
-
-- They forget important user details between sessions
-- They lose track of prior decisions and context
-- They cannot reliably use uploaded documents over time
-- They struggle to remove data cleanly when required
-- They depend on fragile prompt stuffing or naive retrieval
-
-CLAIV Memory is built to solve that. Plug it into your product and your assistant, copilot, or agent can remember what matters — across conversations and documents.
+- 🧠 **Persistent user memory** across conversations
+- 📚 **Reliable document understanding** (not just chunk retrieval)
+- ⏱️ **Temporal awareness** — what happened and when
+- 🎯 **Context injection** ready for LLM prompts
+- 🧹 **Controlled forgetting** — GDPR-safe deletion
 
 ---
 
-## Benchmark
+## ⚡ What this looks like
+
+**❌ Without memory**
+
+```
+User:  My name is Alex and I run a fitness business.
+
+...later...
+
+AI:    How can I help you today?
+```
+
+**✅ With CLAIV**
+
+```
+AI:    How is your fitness business going, Alex?
+```
+
+---
+
+## 🛠️ How it works
+
+1. Send events to `POST /v6/ingest`
+2. CLAIV extracts structured memory asynchronously
+3. Call `POST /v6/recall` before each LLM response
+4. Inject `llm_context.text` into your system prompt
+
+That's it.
+
+---
+
+## 🚀 Quickstart
+
+### 1. Install
+
+```bash
+pip install claiv-memory
+```
+
+### 2. Store memory
+
+```python
+from claiv import ClaivClient
+
+client = ClaivClient(api_key="your_key")
+
+client.ingest({
+    "user_id": "user_123",
+    "conversation_id": "conv_abc",
+    "type": "message",
+    "role": "user",
+    "content": "I'm building an AI agent for compliance review."
+})
+```
+
+### 3. Recall memory
+
+```python
+context = client.recall({
+    "user_id": "user_123",
+    "conversation_id": "conv_abc",
+    "query": "What is the user building?"
+})
+
+print(context["llm_context"]["text"])
+```
+
+### 4. Inject into your LLM
+
+```
+System prompt:
+
+User memory:
+{{ llm_context.text }}
+```
+
+**JavaScript / TypeScript**
+
+```bash
+npm install @claiv/memory
+```
+
+```javascript
+import { ClaivClient } from '@claiv/memory';
+
+const client = new ClaivClient({ apiKey: 'your_key' });
+
+await client.ingest({
+  user_id: 'user_123',
+  conversation_id: 'conv_abc',
+  type: 'message',
+  role: 'user',
+  content: "I'm building an AI agent for compliance review.",
+});
+
+const context = await client.recall({
+  user_id: 'user_123',
+  conversation_id: 'conv_abc',
+  query: 'What is the user building?',
+});
+```
+
+---
+
+## 📄 Document memory (built-in RAG)
+
+Upload documents and CLAIV will:
+
+- Parse structure into sections and spans
+- Embed content with pgvector
+- Retrieve relevant sections automatically
+- Inject them into your LLM context
+
+```python
+doc = client.upload_document({
+    "user_id": "user_123",
+    "project_id": "proj_abc",
+    "document_name": "Product Manual",
+    "content": open("manual.md").read(),
+})
+
+print(f"Indexed {doc['spans_created']} spans across {len(doc['sections'])} sections")
+```
+
+Supports:
+
+- Knowledge copilots over internal documentation
+- Compliance and research tools
+- Support assistants that reason over policies and manuals
+
+---
+
+## 🧠 What makes CLAIV different
+
+| Feature | Vector DB | CLAIV |
+|---|---|---|
+| Remembers users over time | ❌ | ✅ |
+| Structured fact extraction | ❌ | ✅ |
+| Temporal reasoning | ❌ | ✅ |
+| Token-efficient recall | ❌ | ✅ |
+| Document + conversation memory | ❌ | ✅ |
+| Controlled forgetting | ❌ | ✅ |
+
+---
+
+## ⚙️ API
+
+```http
+POST /v6/ingest      →  Store memory events
+POST /v6/recall      →  Retrieve context
+POST /v6/documents   →  Upload documents
+POST /v6/forget      →  Delete memory
+```
+
+Full reference → [claiv.io/docs](https://claiv.io/docs)
+
+---
+
+## 🧪 Benchmark
 
 **LoCoMo 10-dialogue J-score: 75.0%**
 
@@ -59,179 +212,51 @@ LoCoMo is the standard benchmark for long-context conversational memory in produ
 
 ---
 
-## Why CLAIV over a vector database
+## 🧩 Use cases
 
-| Feature | Vector DB | CLAIV Memory |
-|---|---|---|
-| Retrieval type | Similarity search | Structured, deterministic facts |
-| Contradiction handling | ❌ | ✅ Resolved automatically |
-| Token budget management | ❌ | ✅ Built-in ranked recall |
-| GDPR deletion proof | ❌ | ✅ Timestamped audit receipt |
-| Evidence-backed facts | ❌ | ✅ Character-exact source quotes |
-| Temporal tracking | ❌ | ✅ Fact version history |
-| Document memory | ❌ | ✅ First-class, indexed for recall |
-
----
-
-## API surface
-
-Four core endpoints cover the full memory lifecycle:
-
-```http
-POST /v6/ingest      →  Store a memory event from a conversation
-POST /v6/documents   →  Upload and index a document for recall
-POST /v6/recall      →  Retrieve ranked context from events and documents
-POST /v6/forget      →  Delete user data with a timestamped audit receipt
-```
-
-Health check (no auth required):
-
-```http
-GET /healthz  →  { "ok": true }
-```
-
----
-
-## Quick start (Python)
-
-```bash
-pip install claiv-memory
-```
-
-```python
-from claiv import ClaivClient
-
-client = ClaivClient(api_key="your_key")
-
-# Store a memory event
-client.ingest({
-    "user_id": "user_123",
-    "conversation_id": "conv_abc",
-    "type": "conversation",
-    "role": "user",
-    "content": "I'm building an AI agent for compliance review.",
-})
-
-# Recall relevant context for the next turn
-context = client.recall({
-    "user_id": "user_123",
-    "conversation_id": "conv_abc",
-    "query": "What is the user building?",
-})
-
-system_prompt = f"User context:\n{context['llm_context']['text']}"
-
-# Upload a document into memory
-doc = client.upload_document({
-    "user_id": "user_123",
-    "project_id": "proj_abc",
-    "document_name": "Product Manual",
-    "content": open("manual.md").read(),
-})
-# doc["spans_created"] → number of indexed spans
-# doc["status"]        → "processing" (distillations complete async)
-
-# Forget a user's data
-client.forget({
-    "user_id": "user_123",
-})
-```
-
-## Quick start (JavaScript)
-
-```bash
-npm install @claiv/memory
-```
-
-```javascript
-import { ClaivClient } from '@claiv/memory';
-
-const client = new ClaivClient({ apiKey: 'your_key' });
-
-// Store a memory event
-await client.ingest({
-  user_id: 'user_123',
-  conversation_id: 'conv_abc',
-  type: 'conversation',
-  role: 'user',
-  content: "I'm building an AI agent for compliance review.",
-});
-
-// Recall relevant context
-const context = await client.recall({
-  user_id: 'user_123',
-  conversation_id: 'conv_abc',
-  query: 'What is the user building?',
-});
-
-// Upload a document
-const doc = await client.uploadDocument({
-  user_id: 'user_123',
-  project_id: 'proj_abc',
-  document_name: 'Product Manual',
-  content: manualText,
-});
-```
-
----
-
-## Document memory
-
-Document ingest is a first-class part of CLAIV Memory, not an add-on.
-
-Uploaded documents are parsed into sections and spans, indexed for retrieval, and surfaced during recall when relevant — alongside event memory. This enables:
-
-- Knowledge copilots over internal documentation
-- Due diligence and research assistants
-- Compliance and evidence retrieval systems
-- Support tools that reason over manuals and policies
-- Agents that combine long-term event memory with file-based context
-
----
-
-## Use cases
-
-CLAIV Memory is well suited to products that need reliable context over time:
-
-- AI assistants with persistent user memory
+- AI chatbots with persistent memory
+- AI agents with multi-step workflows
+- SaaS apps with per-user context
 - Customer support systems
 - Internal knowledge copilots
-- Legal and compliance research tools
-- Enterprise search with memory
-- Workflow agents that need continuity across sessions
-- Products that combine conversation context with uploaded files
+- Research and compliance tools
 
 ---
 
-## Works with
+## ⚠️ Notes
 
-- ✅ OpenAI (GPT-4o, GPT-4.1)
-- ✅ Anthropic Claude
-- ✅ LangChain
-- ✅ Any LLM with a system prompt
+- Ingest is async — memory may not appear instantly
+- Always include `user_id` and `conversation_id`
+- Inject `llm_context.text` into your system prompt
 
 ---
 
-## Repositories
+## 🔐 Security
+
+- API key authentication with tenant isolation
+- Strict schema validation on all endpoints
+- Scoped deletion via `POST /v6/forget`
+
+---
+
+## 📦 Repositories
 
 | Repo | Description |
 |---|---|
 | [sdk-js](https://github.com/Claiv-Memory/sdk-js) | JavaScript / TypeScript SDK |
 | [sdk-py](https://github.com/Claiv-Memory/sdk-py) | Python SDK |
-| [template-openai-nodejs](https://github.com/Claiv-Memory/template-openai-nodejs) | OpenAI Node.js integration |
-| [template-openai-python](https://github.com/Claiv-Memory/template-openai-python) | OpenAI Python integration |
-| [template-claude-python](https://github.com/Claiv-Memory/template-claude-python) | Anthropic Claude integration |
-| [template-langchain](https://github.com/Claiv-Memory/template-langchain) | LangChain integration |
+| [template-openai-nodejs](https://github.com/Claiv-Memory/template-openai-nodejs) | OpenAI Node.js template |
+| [template-openai-python](https://github.com/Claiv-Memory/template-openai-python) | OpenAI Python template |
+| [template-claude-python](https://github.com/Claiv-Memory/template-claude-python) | Claude template |
+| [template-langchain](https://github.com/Claiv-Memory/template-langchain) | LangChain template |
 | [template-nextjs](https://github.com/Claiv-Memory/template-nextjs) | Next.js chat app |
 | [template-document-rag-python](https://github.com/Claiv-Memory/template-document-rag-python) | Document RAG (Python) |
 | [template-document-rag-nextjs](https://github.com/Claiv-Memory/template-document-rag-nextjs) | Document RAG (Next.js) |
 
 ---
 
-<div align="center">
+## 🚀 Get started
 
-CLAIV Memory gives AI systems durable memory across events and documents — with retrieval and forgetting built in.
+👉 **Get API key:** [claiv.io](https://claiv.io)
 
-[claiv.io](https://claiv.io) · [Get your API key](https://claiv.io) · [Documentation](https://claiv.io)
-
-</div>
+👉 **Docs:** [claiv.io/docs](https://claiv.io/docs)
