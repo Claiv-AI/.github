@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://claiv.io/claiv-logo-96.png" width="72" height="72" alt="Claiv" />
+<img src="https://claiv.io/claiv-mark-navy.png" width="76" height="76" alt="Claiv" />
 
 # Claiv
 
@@ -9,8 +9,8 @@
 [claiv.io](https://claiv.io) · [How this got here](https://claiv.io/about) · [Docs](https://claiv.io/docs)
 
 [![LoCoMo J-Score](https://img.shields.io/badge/LoCoMo%20J--Score-75.0%25-brightgreen)](https://claiv.io/about)
-[![SDK: JavaScript](https://img.shields.io/badge/SDK-JavaScript-yellow)](https://github.com/Claiv-Memory/sdk-js)
-[![SDK: Python](https://img.shields.io/badge/SDK-Python-blue)](https://github.com/Claiv-Memory/sdk-py)
+[![SDK: JavaScript](https://img.shields.io/badge/SDK-JavaScript-yellow)](https://github.com/Claiv-AI/sdk-js)
+[![SDK: Python](https://img.shields.io/badge/SDK-Python-blue)](https://github.com/Claiv-AI/sdk-py)
 
 </div>
 
@@ -144,11 +144,11 @@ MIT, zero-dependency · [npm](https://www.npmjs.com/package/@claiv/parser)
 
 | Repo | What it is |
 |---|---|
-| [sdk-js](https://github.com/Claiv-Memory/sdk-js) | JavaScript / TypeScript SDK for the Memory API |
-| [sdk-py](https://github.com/Claiv-Memory/sdk-py) | Python SDK for the Memory API |
-| [claiv-memory](https://github.com/Claiv-Memory/claiv-memory) | The memory layer itself |
-| [ai-chatbot-with-memory](https://github.com/Claiv-Memory/ai-chatbot-with-memory) | A chatbot that remembers users across sessions |
-| [Claiv-Studio-Releases](https://github.com/Claiv-Memory/Claiv-Studio-Releases) | CLAIV Studio builds and release notes |
+| [sdk-js](https://github.com/Claiv-AI/sdk-js) | JavaScript / TypeScript SDK for the Memory API |
+| [sdk-py](https://github.com/Claiv-AI/sdk-py) | Python SDK for the Memory API |
+| [claiv-memory](https://github.com/Claiv-AI/claiv-memory) | The memory layer itself |
+| [ai-chatbot-with-memory](https://github.com/Claiv-AI/ai-chatbot-with-memory) | A chatbot that remembers users across sessions |
+| [Claiv-Studio-Releases](https://github.com/Claiv-AI/Claiv-Studio-Releases) | CLAIV Studio builds and release notes |
 
 ---
 
