@@ -1,84 +1,65 @@
-# 🧠 CLAIV Memory
+<div align="center">
 
-**AI Memory for Chatbots, Agents, and LLM Apps**
+<img src="https://claiv.io/claiv-logo-96.png" width="72" height="72" alt="Claiv" />
 
-> Your AI forgets everything.
-> CLAIV fixes that.
+# Claiv
 
-[![LoCoMo J-Score](https://img.shields.io/badge/LoCoMo%20J--Score-75.0%25-brightgreen)](https://claiv.io)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+**Software for AI that has to account for itself.**
+
+[claiv.io](https://claiv.io) · [How this got here](https://claiv.io/about) · [Docs](https://claiv.io/docs)
+
+[![LoCoMo J-Score](https://img.shields.io/badge/LoCoMo%20J--Score-75.0%25-brightgreen)](https://claiv.io/about)
 [![SDK: JavaScript](https://img.shields.io/badge/SDK-JavaScript-yellow)](https://github.com/Claiv-Memory/sdk-js)
 [![SDK: Python](https://img.shields.io/badge/SDK-Python-blue)](https://github.com/Claiv-Memory/sdk-py)
 
----
-
-## 🚨 The problem
-
-If you're building with OpenAI, Claude, or LangChain — you've seen this:
-
-- Your chatbot forgets users between sessions
-- Your AI agent loses context after a few steps
-- Your app relies on fragile chat history or prompt stuffing
-- Your RAG setup is inconsistent and unreliable
-
-👉 This is not a model problem — it's a **memory problem**
+</div>
 
 ---
 
-## ✅ The solution
+Three products, built in that order, each the answer to a problem the last one
+exposed. The full account is at [claiv.io/about](https://claiv.io/about).
 
-CLAIV is a **drop-in memory API for AI applications.**
+## CLAIV Studio
 
-It gives your AI:
+**An AI organisation you can govern.** Describe an outcome and Studio designs a
+team of specialists around it — their knowledge, their connections and their
+limits set out before any of it exists. You approve the design. It builds the
+specialists and proves them against realistic cases. Then it runs, and every
+decision, authority and verified effect is on the record.
 
-- 🧠 **Persistent user memory** across conversations
-- 📚 **Reliable document understanding** (not just chunk retrieval)
-- ⏱️ **Temporal awareness** — what happened and when
-- 🎯 **Context injection** ready for LLM prompts
-- 🧹 **Controlled forgetting** — GDPR-safe deletion
+- Authority is explicit per specialist
+- Approval is bound to the exact action, not to a category
+- Effects are verified against the system itself, not assumed from an approval
+- Credentials are handles, never values
+- Runs on your own computer, and can run models locally
 
----
+Windows, in paid early access. **[Request access →](https://claiv.io/early-access)**
+The download and every release note live on your
+[account page](https://claiv.io/account).
 
-## ⚡ What this looks like
+## CLAIV Memory
 
-**❌ Without memory**
+**A persistent memory API.** Your AI forgets everything between sessions;
+context windows only move the ceiling. Memory gives it continuity:
 
-```
-User:  My name is Alex and I run a fitness business.
+- Persistent user memory across conversations
+- Document understanding, not just chunk retrieval
+- Temporal awareness — what happened, and when
+- Context injection ready for an LLM prompt
+- Controlled forgetting, for when someone asks to be deleted
 
-...later...
-
-AI:    How can I help you today?
-```
-
-**✅ With CLAIV**
-
-```
-AI:    How is your fitness business going, Alex?
+```http
+POST /v6/ingest      →  store memory events
+POST /v6/recall      →  retrieve context
+POST /v6/documents   →  upload documents
+POST /v6/forget      →  delete memory
 ```
 
----
-
-## 🛠️ How it works
-
-1. Send events to `POST /v6/ingest`
-2. CLAIV extracts structured memory asynchronously
-3. Call `POST /v6/recall` before each LLM response
-4. Inject `llm_context.text` into your system prompt
-
-That's it.
-
----
-
-## 🚀 Quickstart
-
-### 1. Install
+**Python**
 
 ```bash
 pip install claiv-memory
 ```
-
-### 2. Store memory
 
 ```python
 from claiv import ClaivClient
@@ -90,29 +71,16 @@ client.ingest({
     "conversation_id": "conv_abc",
     "type": "message",
     "role": "user",
-    "content": "I'm building an AI agent for compliance review."
+    "content": "I'm building an AI agent for compliance review.",
 })
-```
 
-### 3. Recall memory
-
-```python
 context = client.recall({
     "user_id": "user_123",
     "conversation_id": "conv_abc",
-    "query": "What is the user building?"
+    "query": "What is the user building?",
 })
 
-print(context["llm_context"]["text"])
-```
-
-### 4. Inject into your LLM
-
-```
-System prompt:
-
-User memory:
-{{ llm_context.text }}
+print(context["llm_context"]["text"])   # inject into your system prompt
 ```
 
 **JavaScript / TypeScript**
@@ -125,138 +93,65 @@ npm install @claiv/memory
 import { ClaivClient } from '@claiv/memory';
 
 const client = new ClaivClient({ apiKey: 'your_key' });
-
-await client.ingest({
-  user_id: 'user_123',
-  conversation_id: 'conv_abc',
-  type: 'message',
-  role: 'user',
-  content: "I'm building an AI agent for compliance review.",
-});
-
-const context = await client.recall({
-  user_id: 'user_123',
-  conversation_id: 'conv_abc',
-  query: 'What is the user building?',
-});
+await client.ingest({ user_id: 'user_123', conversation_id: 'conv_abc',
+  type: 'message', role: 'user', content: "I'm building an AI agent." });
+const context = await client.recall({ user_id: 'user_123',
+  conversation_id: 'conv_abc', query: 'What is the user building?' });
 ```
 
----
+### Benchmark
 
-## 📄 Document memory (built-in RAG)
+Official LoCoMo result across all ten dialogues — the standard benchmark for
+long-conversation memory:
 
-Upload documents and CLAIV will:
+| Overall J-score | Open domain | Temporal | Single hop | Multi hop |
+|:---:|:---:|:---:|:---:|:---:|
+| **75.0%** | 79.7% | 74.2% | 68.8% | 55.2% |
 
-- Parse structure into sections and spans
-- Embed content with pgvector
-- Retrieve relevant sections automatically
-- Inject them into your LLM context
+### Notes that save an afternoon
 
-```python
-doc = client.upload_document({
-    "user_id": "user_123",
-    "project_id": "proj_abc",
-    "document_name": "Product Manual",
-    "content": open("manual.md").read(),
-})
-
-print(f"Indexed {doc['spans_created']} spans across {len(doc['sections'])} sections")
-```
-
-Supports:
-
-- Knowledge copilots over internal documentation
-- Compliance and research tools
-- Support assistants that reason over policies and manuals
-
----
-
-## 🧠 What makes CLAIV different
-
-| Feature | Vector DB | CLAIV |
-|---|---|---|
-| Remembers users over time | ❌ | ✅ |
-| Structured fact extraction | ❌ | ✅ |
-| Temporal reasoning | ❌ | ✅ |
-| Token-efficient recall | ❌ | ✅ |
-| Document + conversation memory | ❌ | ✅ |
-| Controlled forgetting | ❌ | ✅ |
-
----
-
-## ⚙️ API
-
-```http
-POST /v6/ingest      →  Store memory events
-POST /v6/recall      →  Retrieve context
-POST /v6/documents   →  Upload documents
-POST /v6/forget      →  Delete memory
-```
-
-Full reference → [claiv.io/docs](https://claiv.io/docs)
-
----
-
-## 🧪 Benchmark
-
-**LoCoMo 10-dialogue J-score: 75.0%**
-
-| Category | Score |
-|---|---|
-| Single-hop | 68.8% |
-| Temporal | 74.2% |
-| Multi-hop | 55.2% |
-| Open-domain | 79.7% |
-
-LoCoMo is the standard benchmark for long-context conversational memory in production AI systems.
-
----
-
-## 🧩 Use cases
-
-- AI chatbots with persistent memory
-- AI agents with multi-step workflows
-- SaaS apps with per-user context
-- Customer support systems
-- Internal knowledge copilots
-- Research and compliance tools
-
----
-
-## ⚠️ Notes
-
-- Ingest is async — memory may not appear instantly
+- Ingest is asynchronous — memory may not appear instantly
 - Always include `user_id` and `conversation_id`
-- Inject `llm_context.text` into your system prompt
+- Inject `llm_context.text` into your system prompt, not the raw events
+- API key authentication with tenant isolation; deletion is scoped via `/v6/forget`
+
+Version 6.3, in production at `api.claiv.io`. **Available on request** rather
+than self-service sign-up — [read the docs](https://claiv.io/docs), then write
+to `support@claiv.io` and we will set up a project and issue a key.
+
+## Claiv Parser
+
+**Deterministic structured output, with no model.** Every system that asks an
+LLM for JSON eventually writes half a parser to cope with what comes back:
+fenced blocks, chatty preambles, Python `True`, truncation — and search models
+that return prose with citations and no JSON at all.
+
+Six tiers run cheapest-first and stop at the first schema-valid result. Tiers
+0–4 are pure functions, so the same input and schema give byte-identical output
+every time, offline. It never invents: anything absent from the source is
+`null` and listed in `unresolved`, and every field reports how it was resolved
+— exact, repaired, coerced, or read from markdown.
+
+```bash
+npm install @claiv/parser
+```
+
+MIT, zero-dependency · [npm](https://www.npmjs.com/package/@claiv/parser)
 
 ---
 
-## 🔐 Security
+## Repositories
 
-- API key authentication with tenant isolation
-- Strict schema validation on all endpoints
-- Scoped deletion via `POST /v6/forget`
-
----
-
-## 📦 Repositories
-
-| Repo | Description |
+| Repo | What it is |
 |---|---|
-| [sdk-js](https://github.com/Claiv-Memory/sdk-js) | JavaScript / TypeScript SDK |
-| [sdk-py](https://github.com/Claiv-Memory/sdk-py) | Python SDK |
-| [template-openai-nodejs](https://github.com/Claiv-Memory/template-openai-nodejs) | OpenAI Node.js template |
-| [template-openai-python](https://github.com/Claiv-Memory/template-openai-python) | OpenAI Python template |
-| [template-claude-python](https://github.com/Claiv-Memory/template-claude-python) | Claude template |
-| [template-langchain](https://github.com/Claiv-Memory/template-langchain) | LangChain template |
-| [template-nextjs](https://github.com/Claiv-Memory/template-nextjs) | Next.js chat app |
-| [template-document-rag-python](https://github.com/Claiv-Memory/template-document-rag-python) | Document RAG (Python) |
-| [template-document-rag-nextjs](https://github.com/Claiv-Memory/template-document-rag-nextjs) | Document RAG (Next.js) |
+| [sdk-js](https://github.com/Claiv-Memory/sdk-js) | JavaScript / TypeScript SDK for the Memory API |
+| [sdk-py](https://github.com/Claiv-Memory/sdk-py) | Python SDK for the Memory API |
+| [claiv-memory](https://github.com/Claiv-Memory/claiv-memory) | The memory layer itself |
+| [ai-chatbot-with-memory](https://github.com/Claiv-Memory/ai-chatbot-with-memory) | A chatbot that remembers users across sessions |
+| [Claiv-Studio-Releases](https://github.com/Claiv-Memory/Claiv-Studio-Releases) | CLAIV Studio builds and release notes |
 
 ---
 
-## 🚀 Get started
-
-👉 **Get API key:** [claiv.io](https://claiv.io)
-
-👉 **Docs:** [claiv.io/docs](https://claiv.io/docs)
+<div align="center">
+<sub>Access requests, questions and bug reports: <a href="mailto:support@claiv.io">support@claiv.io</a></sub>
+</div>
